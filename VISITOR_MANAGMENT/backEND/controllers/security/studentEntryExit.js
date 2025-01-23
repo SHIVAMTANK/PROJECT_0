@@ -2,7 +2,7 @@ const student_transactional = require('../../models/transactional/student');
 const student_logs = require('../../models/logs/student');
 const student = require('../../models/static/students_alumni/student');
 
-const docsUpload = require('../../blob/azureBlob');
+
 
 
 const studentEntryExit = async (req, res) => {

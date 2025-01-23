@@ -3,7 +3,7 @@ const visitor_transactional = require('../../models/transactional/visitor');
 
 const faculty_adminBlock = require('../../models/static/faculty_adminBlock/faculty_adminBlock');
 
-const filesUpload = require('../../blob/azureBlob');
+
 
 
 const uuid = require('uuid');

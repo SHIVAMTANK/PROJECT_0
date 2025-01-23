@@ -32,3 +32,4 @@ const login = async (req,res)=>{
         res.status(500).send({message: "Internal server error"});   
     }
 }
+module.exports = login;

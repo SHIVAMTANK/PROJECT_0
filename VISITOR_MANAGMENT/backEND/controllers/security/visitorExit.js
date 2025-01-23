@@ -1,7 +1,7 @@
 const visitor_transactional = require('../../models/transactional/visitor');
 const visitor_logs = require('../../models/logs/visitor');
 
-const fileUpload = require('../../blob/azureBlob');
+
 
 
 const visitorExit = async (req, res) => {

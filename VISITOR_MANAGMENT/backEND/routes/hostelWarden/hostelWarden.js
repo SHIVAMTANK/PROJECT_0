@@ -20,8 +20,4 @@ router.post('/addParentVisit',auth, require('../../controllers/hostelWarden/addP
 router.get('/getStudentLogs', auth,require('../../controllers/dataTables/getStudentLogs'));
 
 
-
-
-
-
 module.exports = router;
