@@ -5,7 +5,11 @@ const itAdminAuth = async (req, res, next) => {
     try {
         
         const token = req.header('Authorization');
-        const decoded = await jwt.verify(token, process.env.JWT_SECRET);
+        console.log("not get token");
+        
+        const decoded = await jwt.verify(token, "mysecret");
+        console.log("got token");
+        
 
         if(decoded.uuid.endsWith('itAdmin') === false){
             return res.status(401).send({ error: 'Auth Failed' });

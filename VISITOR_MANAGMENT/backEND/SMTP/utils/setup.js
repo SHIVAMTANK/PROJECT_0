@@ -4,15 +4,17 @@ const hbs = async () => (await import('nodemailer-express-handlebars')).default;
 const mailTransporter = nodemailer.createTransport({
     host:'smtp.gmail.com',
     service:'gmail',
-    port:'465',
-    secure: true,
+    port:587,
+    secure: false,
     auth:{
-        user:process.env.SMTP_EMAIL,
-        pass:process.env.SMTP_PASSWORD
+        user:"shivamtank8059@gmail.com",
+        pass:'axmk bkhw nlso xrbk'
     },
     tls: {
         rejectUnauthorized: false, // Allow self-signed certificates
     },
+    // logger:true,
+    // debug:true
 });
 
 const handlebarOption = {
