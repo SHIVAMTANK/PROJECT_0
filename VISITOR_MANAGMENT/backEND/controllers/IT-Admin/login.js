@@ -6,7 +6,6 @@ const login = async (req,res) => {
     try{
         const {email, password} = req.body;
         const user = await IT_Admin.findOne({email});
-
         if(!user){
             return res.status(400).send({message: "Invalid credentials"});
         }

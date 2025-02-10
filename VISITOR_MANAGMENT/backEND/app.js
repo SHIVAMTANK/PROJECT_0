@@ -49,6 +49,8 @@ app.use('/faculty_adminBlock', require('./routes/faculty_adminBlock/faculty_admi
 app.use('/securityManager', require('./routes/securityManager/securityManager'));
 
 
+
+
 app.listen(port,()=>{
     console.log(`server is listening on port ${port}`);
     

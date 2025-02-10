@@ -135,7 +135,7 @@ const addUser = async (req, res) => {
                 name: req.body.name,
                 email: req.body.email,
                 password: req.body.email,
-                mobile: req.body.mobile,
+                mobileS: req.body.mobile,
                 uuid: `${uuid.v4()}securityManager`
             });
 
