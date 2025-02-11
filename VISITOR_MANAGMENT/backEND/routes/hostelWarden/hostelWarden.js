@@ -1,6 +1,6 @@
 const express = require('express');
 
-const router = express.Router('hostelWarden');
+const router = express.Router();
 
 const auth = require('../../middleware/hostelWardenAuth');
 
