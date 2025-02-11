@@ -5,7 +5,8 @@ import Login from './Views/Login';
 import { UserProvider } from './Services/AuthContext'
 import Cookies from 'js-cookie'
 import Profile from './Views/Profile';
-import ResetPasssword from './Views/ResetPasssword';
+import ResetPasssword from './Views/ResetPassword'
+import { BrowserRouter as Router } from "react-router-dom";
 
 const PrivateRoutes = () => {
     const token = Cookies.get('token')
@@ -22,8 +23,9 @@ function App() {
 
 
     return (
-        <>
-            <UserProvider>
+        <>  
+        <Router>
+              <UserProvider>
                 <div className="App h-screen">
                     <Routes>
                         <Route path='/' element={<Login />} />
@@ -37,6 +39,7 @@ function App() {
                     </Routes>
                 </div>
             </UserProvider>
+            </Router>
         </>
     )
 }
