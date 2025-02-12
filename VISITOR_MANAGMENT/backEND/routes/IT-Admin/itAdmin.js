@@ -12,7 +12,7 @@ router.post('/login', require('../../controllers/IT-Admin/login'));
 
 router.post('/addUser',auth, require('../../controllers/IT-Admin/addUser'));
 
-router.post('/n',auth, require('../../controllers/IT-Admin/addBulkStudents'));
+router.post('/addBulkStudents',auth, require('../../controllers/IT-Admin/addBulkStudents'));
 
 router.post('/addStudent',auth, require('../../controllers/IT-Admin/addStudent'));
 

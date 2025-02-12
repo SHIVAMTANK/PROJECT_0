@@ -32,7 +32,8 @@ const LoginForm = () => {
 
                 const response = await postRequest('student/login', dataToSend)
                 // console.log(response)
-
+                    console.log("post request send");
+                    
                 if (response.status == 200) {
                     alert('Login Successful')
                     // window.location.reload()

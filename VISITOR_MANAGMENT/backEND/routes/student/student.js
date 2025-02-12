@@ -2,7 +2,7 @@ const express = require('express');
 
 
 
-const router = express.Router();
+const router = express.Router('/student');
 
 const auth = require('../../middleware/studentAuth');
 

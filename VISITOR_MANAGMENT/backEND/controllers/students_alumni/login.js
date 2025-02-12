@@ -23,7 +23,7 @@ const login = async (req, res) => {
             res.status(400).send({ error: "Invalid ID or Password" });
             return;
         }
-        const token = jwt.sign({ student_id: studentData.student_id, uuid:studentData.uuid }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ student_id: studentData.student_id, uuid:studentData.uuid },"musecretkey", { expiresIn: '1h' });
 
         res.status(200).send({token});
 
