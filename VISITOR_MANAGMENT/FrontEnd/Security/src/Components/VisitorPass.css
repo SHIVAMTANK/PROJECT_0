@@ -1,0 +1,120 @@
+.visitor-pass {
+  max-width: 400px;
+  margin: auto;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  background-color: #fff;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+}
+
+.company-logo img {
+  width: 50px;
+  height: 50px;
+}
+
+.company-info {
+  text-align: left;
+}
+
+.company-info h1 {
+  font-size: 1.5em;
+  margin: 0;
+}
+
+.company-info p {
+  margin: 0;
+  font-size: 0.9em;
+}
+
+.details p {
+  margin: 5px 0;
+  font-size: 0.95em;
+}
+
+.details span {
+  font-weight: bold;
+}
+
+.section-title {
+  font-weight: bold;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.visitor-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 10px 0;
+}
+
+.visitor-info1{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 10px 0;
+    flex-direction: column;
+}
+
+.visitor-photo img {
+  width: 130px;
+  height: 130px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  /* margin-right: 1px; */
+}
+
+.visitor-details {
+  /* flex: 1; */
+  align-self: flex-end;
+  text-align: left;
+  margin-right: 10px;
+}
+
+.photo-container{
+    display: flex;
+    justify-content: center;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #ccc;
+}
+
+.footer .initials,
+.footer .timeout {
+  flex: 1;
+  text-align: center;
+  font-weight: bold;
+}
+
+.qr-code {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.validity {
+  text-align: center;
+  font-size: 0.9em;
+}
+/* 
+.print-button{
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    background-color: #0EA5E9;
+} */
