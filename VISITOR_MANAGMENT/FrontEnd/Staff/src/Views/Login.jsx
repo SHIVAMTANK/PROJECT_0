@@ -95,7 +95,7 @@ const LoginForm = () => {
                         />
 
                         {/* login button */}
-                        <Button type='submit'>Login</Button>
+                        <Button className="text-black" type='submit'>Login</Button>
                         <p className='text-gray-500'>Forgot Password? <span className='text-blue-500 cursor-pointer' onClick={() => navigate('/reset-password')}>reset-password</span></p>
                     </form>
                 </div>
