@@ -4,10 +4,8 @@ const jwt = require('jsonwebtoken');
 const security = require('../../models/static/security/security');
 const currentShift = require('../../models/securityShifts/currentShift');
 
-
 const login = async (req, res) => {
     try {
-
         const email = req.body.email;
         const password = req.body.password;
 
@@ -16,7 +14,7 @@ const login = async (req, res) => {
             timeZone: "Asia/Kolkata",
             hour: '2-digit',
             minute: '2-digit',
-            hourCycle: 'h23' // Add this line to get 24-hour format
+            hourCycle: 'h23'
         };
         const loginTime = current_time.toLocaleString("en-IN", options).match(/\d{1,2}:\d{2}/)[0];
 
@@ -31,49 +29,48 @@ const login = async (req, res) => {
         const user = await security.findOne({ email: email });
 
         if (!user) {
-            return res.status(404).send("User not found");
+            return res.status(404).send({ message: "User not found" });
         }
 
         const curShifts = await currentShift.findOne({});
 
-        const usersShift = curShifts.shift1.includes(user.uuid) ? '1' : curShifts.shift2.includes(user.uuid) ? '2' : curShifts.shift3.includes(user.uuid) ? '3' : null;
+        // Check if curShifts is null
+        if (!curShifts) {
+            return res.status(500).send({ message: "Shift data not available. Please contact admin." });
+        }
+
+        const usersShift =
+            curShifts.shift1?.includes(user.uuid) ? '1' :
+            curShifts.shift2?.includes(user.uuid) ? '2' :
+            curShifts.shift3?.includes(user.uuid) ? '3' :
+            null;
 
         if (!usersShift) {
-            res.status(402).send({message:'Your account has been disabled till the next shift starts.'});
-            return;
+            return res.status(402).send({ message: 'Your account has been disabled till the next shift starts.' });
         }
 
         const shiftTime = shiftTimings[`shift${usersShift}`];
 
-        // console.log(shiftTime);
-
         if (!isTimeInRange(loginTime, shiftTime.start, shiftTime.end)) {
-            res.status(402).send({message:'Your account has been disabled till the next shift starts.'});
-            return;
+            return res.status(402).send({ message: 'Your account has been disabled till the next shift starts.' });
         }
 
         const isMatch = await bcrypt.compare(password, user.password);
 
-
         if (!isMatch) {
-            return res.status(401).send("Invalid Password");
+            return res.status(401).send({ message: "Invalid Password" });
         }
+
         const token = jwt.sign({ name: user.name, email: user.email, uuid: user.uuid }, process.env.JWT_SECRET);
 
-        res.status(200).send({ user, token });
+        return res.status(200).send({ user, token });
+    } catch (error) {
+        console.error('Error in ./controller/security/login.js:', error);
+        return res.status(500).send({ message: "Internal Server Error" });
     }
-    catch (error) {
-        console.log('This error is from ./controller/security/login.js');
-        console.log(error);
-        res.status(500).send();
-    }
-}
-
+};
 
 const isTimeInRange = (time, start, end) => {
-
-    // console.log(time, start, end);
-
     const [startHour, startMinute] = start.split(':').map(Number);
     const [endHour, endMinute] = end.split(':').map(Number);
     const [timeHour, timeMinute] = time.split(':').map(Number);
@@ -90,7 +87,6 @@ const isTimeInRange = (time, start, end) => {
     if (startTime <= endTime) {
         return loginTime >= startTime && loginTime <= endTime;
     } else {
-        // For overnight shifts
         return loginTime >= startTime || loginTime <= endTime;
     }
 };

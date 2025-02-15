@@ -7,7 +7,7 @@ import React, {
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import { BACKEND_URL } from "../../Services/Helpers";
+import { BACKEND_URL } from "../../Services/Helper";
 import { getRequestWithToken } from "../../../../HostelWarden/src/Services/Api";
 
 

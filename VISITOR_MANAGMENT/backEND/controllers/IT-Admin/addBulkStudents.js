@@ -46,7 +46,7 @@ const addBulkStudents = async (req, res) => {
                 
                 try {
                     const result = await student.insertMany(students);
-                    return res.status(200).send({message: "Students added successfully"});
+                    return res.status(201).send({message: "Students added successfully"});
                 }
                 catch (error) {
                     console.log("This is error from ./controllers/IT-Admin/addBulkStudents.js");

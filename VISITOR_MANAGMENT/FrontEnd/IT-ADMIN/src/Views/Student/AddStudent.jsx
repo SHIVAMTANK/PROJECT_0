@@ -51,13 +51,13 @@ const AddStudent = () => {
             const res = await postRequestWithToken('itAdmin/addStudent', dataToSend)
             console.log(res)
 
-            if (res.status == 200) {
+            if (res.status == 201) {
                 alert('Student added successfully.')
                 reset()
-                // navigate('/dashboard')
+                navigate('/dashboard')
             }
-            else if(reponse.status === 409){
-                alert(`Duplicate key error: ${reponse.data.duplicateKey} already exists`);
+            else if(res.status === 409){
+                alert(`Duplicate key error: ${res.data.duplicateKey} already exists`);
             }
             else {
                 alert('Failed to add student. Please try again.')

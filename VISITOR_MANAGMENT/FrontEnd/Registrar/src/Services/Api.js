@@ -1,6 +1,6 @@
 import Cookies from "js-cookie";
 import { commonrequest } from "./CommonRequest";
-import { BACKEND_URL } from "./Helpers";
+import { BACKEND_URL } from "./Helper";
 
 // const token = ;
 

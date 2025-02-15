@@ -1,64 +1,70 @@
-import React, {useEffect} from 'react'
-import { Navbar } from '../Components/Navbar'
-import { StickyFooterMobile } from '../Components/StickyFooterMobile'
-import QrCodeComponent from '../Components/QrCodeComponent'
-import { getRequestWithToken } from '../Services/Api';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { Navbar } from "../Components/Navbar";
+import { StickyFooterMobile } from "../Components/StickyFooterMobile";
+import QrCodeComponent from "../Components/QrCodeComponent";
+import { getRequestWithToken } from "../Services/Api";
+import { useNavigate } from "react-router-dom";
 
 const QrCode = () => {
+  const [data, setData] = useState(null);
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
 
-    const [data, setData] = React.useState({});
-    const navigate = useNavigate(); // For navigation
-    const [loading, setLoading] = React.useState(true);
+  // Fetching data from backend
+  useEffect(() => {
+    getRequestWithToken("student/getData")
+      .then((res) => {
+        setData(res.data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        navigate("/login");
+      });
+  }, []);
 
-    // Fetching data from backend
-    useEffect(() => {
-        getRequestWithToken('student/getData')
-            .then((res) => {
-                setData(res.data);
-                setLoading(false);
-            })
-            .catch((err) => {
-                console.log(err);
-                navigate('/login');
-            });
-    }
-        , []);
-
-    // console.log(data);
-
+  // Show loading spinner
+  if (loading) {
     return (
-        loading ? <div className="flex justify-center items-center h-screen">
-            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue3"></div>
-        </div> :
-        <>
-            <Navbar />
+      <div className="flex justify-center items-center h-screen">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+      </div>
+    );
+  }
 
-            {/* box with name, email and qr code, qr code is on another div,  and back button at the below*/}
+  return (
+    <>
+      <Navbar />
 
-            <div className='flex flex-col justify-center items-center h-screen w-screen '>
-                <div className='bg-white p-10 rounded-2xl shadow-2xl w-[400px] space-y-5'>
+      {/* Profile Box with Name, Email & QR Code */}
+      <div className="flex flex-col justify-center items-center h-screen w-screen">
+        <div className="bg-white p-8 rounded-xl shadow-lg w-[350px] space-y-6">
+          {/* Name & ID */}
+          <div className="flex flex-col items-center">
+            <h1 className="text-2xl font-bold text-blue-600">{data?.name || "Unknown"}</h1>
+            <p className="text-blue-500 font-light">{data?.student_id || "N/A"}</p>
+          </div>
 
-                    <div className=' flex flex-col items-center justify-center'>
-                        <h1 className='text-2xl font-bold text-blue5 '>{data.name}</h1>
-                        <p className='text-blue5 font-light'>{data.student_id}</p>
-                    </div>
+          {/* QR Code Section */}
+          <div className="flex justify-center items-center bg-gray-200 p-6 rounded-xl">
+            {data?.uuid ? <QrCodeComponent value={data.uuid} /> : <p>No QR Code Available</p>}
+          </div>
 
-                    {/* another div with qr coponent on it */}
+          {/* Go Back Button */}
+          <div className="flex justify-center">
+            <button
+              className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition duration-300"
+              onClick={() => navigate("/profile")}
+            >
+              Go Back
+            </button>
+          </div>
+        </div>
+      </div>
 
-                    <div className='flex justify-center items-center bg-gray-200 p-8 rounded-2xl'>
-                        <QrCodeComponent value={data.uuid} />
-                    </div>
+      <StickyFooterMobile />
+    </>
+  );
+};
 
-                    <div className='flex justify-center items-center' onClick={()=> navigate('/profile')} >
-                        <button className='bg-blue2 text-white px-6 py-3 rounded-2xl'>Go Back</button>
-                    </div>
-                </div>
-            </div>
-
-            <StickyFooterMobile />
-        </>
-    )
-}
-
-export default QrCode
+export default QrCode;

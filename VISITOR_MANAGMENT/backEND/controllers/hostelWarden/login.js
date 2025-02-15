@@ -22,7 +22,7 @@ const login = async (req, res) => {
             return res.status(400).send({ error: 'Invalid login credentials' });
         }
 
-        const token = jwt.sign({ mobile : user.mobile ,uuid : user.uuid}," mysecretabcd", { expiresIn: '7d' });
+        const token = jwt.sign({ mobile : user.mobile ,uuid : user.uuid},"mysecret", { expiresIn: '7d' });
 
         res.status(200).send({ token,user });
 

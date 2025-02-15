@@ -13,7 +13,7 @@ const login = async (req,res) => {
         if (temp) {
             const isMatch = await bcrypt.compare(password, temp.password);
             if (isMatch) {
-                const token = jwt.sign({ email,uuid : temp.uuid }, process.env.JWT_SECRET, { expiresIn: '1h' });
+                const token = jwt.sign({ email,uuid : temp.uuid }, "mysecret", { expiresIn: '1h' });
                 res.status(200).send({ message: "Login success" , token});
             }
             else {

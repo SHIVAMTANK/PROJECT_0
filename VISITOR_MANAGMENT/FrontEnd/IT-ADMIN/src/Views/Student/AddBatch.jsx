@@ -41,7 +41,7 @@ const AddBatch = () => {
 
             // console.log(res)
 
-            if (res.status == 200) {
+            if (res.status == 201) {
                 alert('Batch added successfully.')
                 reset()
                 navigate('/dashboard')
@@ -50,7 +50,8 @@ const AddBatch = () => {
                 alert('There is some problem in data. Please check and try again.')
             }
             else if (res.status == 400) {
-                alert('The Given excel file is in invalid format.')
+                alert('The Given excel file is in invalid format.');   
+                
             }
             else if (res.status == 405) {
                 alert('Excel file is empty.')

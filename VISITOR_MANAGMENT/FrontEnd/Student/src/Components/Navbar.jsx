@@ -15,7 +15,7 @@ export const Navbar = ({ signout = true }) => {
                     }
                 }>
                     <img src={Logo} alt='logo' className='w-10 h-10' />
-                    <h1 className='text-xl text-blue6 font-bold'>DAIICT</h1>
+                    <h1 className='text-xl text-blue6 font-bold'>VISITOR-MANAGMENT</h1>
                 </div>
 
                 {
