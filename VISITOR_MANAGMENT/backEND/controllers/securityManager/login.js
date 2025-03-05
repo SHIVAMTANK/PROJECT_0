@@ -29,7 +29,7 @@ const login = async (req, res) => {
             }
         };
 
-        const token = jwt.sign(payload, process.env.JWT_SECRET);
+        const token = jwt.sign(payload, "mysecret");
 
         res.status(200).send({token});
         

@@ -2,7 +2,7 @@ const express = require('express');
 
 
 
-const router = express.Router();
+const router = express.Router('/staff');
 
 const auth = require('../../middleware/staffAuth');
 
