@@ -90,6 +90,8 @@ const addUser = async (req, res) => {
         }
         else if (role == "faculty_adminBlock") {
 
+         
+
             const newFaculty = new faculty_adminBlock({
                 name: req.body.name,
                 email: req.body.email,

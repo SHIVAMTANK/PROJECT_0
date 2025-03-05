@@ -47,7 +47,7 @@ const AddUser = () => {
             console.log(dataTosend);
 
             const reponse = await postRequestWithToken('itAdmin/addUser', dataTosend);  
-            // console.log(reponse);
+            console.log("this is repose",reponse);
 
             if(reponse.status === 200){
                 alert('User Added Successfully');

@@ -19,7 +19,7 @@ export const postRequestWithToken = async (endpoint, data, headers = {}, params 
     if (!token) {
         throw new Error('No token found');
     }
-    headers['Authorization '] = token;
+    headers['Authorization'] = token;
     // headers['Content-Type'] = 'application/json';
     try {
         const response = await commonrequest("POST", `${BACKEND_URL}/${endpoint}`, data, headers, params);
