@@ -36,26 +36,31 @@ const facultySchema = new mongoose.Schema({
 //salt means ketal character apde add karva upar thi apda 
 //password store karva pela
 //random character add kari dese
-facultySchema.pre("save",async (next)=>{
-    const password = this.password;
+facultySchema.pre("save", async function (next) { 
+    if (!this.isModified("password")) return next(); // Only hash if password is modified
 
-    const hashed_pass = await bcrypt.hash(password,8);
-    this.password = hashed_pass;
-    next();
-})
+    try {
+        const salt = await bcrypt.genSalt(8);
+        this.password = await bcrypt.hash(this.password, salt);
+        next();
+    } catch (error) {
+        next(error);
+    }
+});
+facultySchema.pre("updateOne", async function (next) {
+    const update = this.getUpdate(); 
 
-facultySchema.pre('updateOne',async (next)=>{
-    const update = this.getUpdate();
-    //    Retrieves the current update object from the Mongoose query.
-    //example {email:"shivam@gmail.com",password:"updatedone"}
-
-    if(update.password){
-        const hashed_pass = await bcrypt.hash(update.password,8);
-        this.setUpdate({...update,password:hashed_pass});
-        //...update shlowcopy banavse 
-        //ne aema khali password field ne change kari dese 
+    if (update.password) {
+        try {
+            const salt = await bcrypt.genSalt(8);
+            update.password = await bcrypt.hash(update.password, salt);
+            this.update({}, update);
+        } catch (error) {
+            return next(error);
+        }
     }
     next();
-})
+});
+
 
 module.exports = mongoose.model('Faculty_AdminStaff', facultySchema);

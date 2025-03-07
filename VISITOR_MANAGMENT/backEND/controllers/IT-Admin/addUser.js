@@ -18,6 +18,8 @@ const uuid = require('uuid');
 
 const addUser = async (req, res) => {
 
+    console.log("Request received:", req.body);
+
     try {
 
         const role = req.body.role;
@@ -90,7 +92,7 @@ const addUser = async (req, res) => {
         }
         else if (role == "faculty_adminBlock") {
 
-         
+            console.log("Faculty Admin Block Logic Entered");
 
             const newFaculty = new faculty_adminBlock({
                 name: req.body.name,
@@ -100,15 +102,27 @@ const addUser = async (req, res) => {
                 uuid: `${uuid.v4()}faculty_adminBlock`
             });
 
+            // try {
+            //     console.log("Saving Faculty Admin Block...");
+            //     await newFaculty.save();
+            //     console.error("MongoDB Error Details:", error);
+            //     res.status(200).send({ message: "Faculty added successfully" });
+            // } catch (error) {
+            //     if (error.name == 'MongoServerError' && error.code == 11000) {
+            //         res.status(409).send({ message: "Duplicate key error", duplicateKey: Object.keys(error.keyPattern)[0] });
+            //         return;
+            //     }
+            // }
             try {
+                console.log("Saving Faculty Admin Block...");
                 await newFaculty.save();
+                console.log("Faculty Admin Block Saved Successfully!");
                 res.status(200).send({ message: "Faculty added successfully" });
-            } catch (error) {
-                if (error.name == 'MongoServerError' && error.code == 11000) {
-                    res.status(409).send({ message: "Duplicate key error", duplicateKey: Object.keys(error.keyPattern)[0] });
-                    return;
-                }
+            } catch (error) { // This ensures 'error' is only used inside the catch block
+                console.error("MongoDB Error Details:", error);
+                res.status(500).send({ message: "Error adding faculty_adminBlock", error: error.message });
             }
+            
         }
         else if (role == "registrar") {
 
