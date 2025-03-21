@@ -4,7 +4,7 @@ const auth = async (req, res, next) => {
     try {
         // console.log(req.headers)
         const token = req.headers.authorization;
-        const data = await jwt.verify(token, process.env.JWT_SECRET);
+        const data = await jwt.verify(token, "mysecret");
         // console.log(data);
         if (data.uuid.endsWith('staff') === false) {
             return res.status(401).send({

@@ -5,10 +5,9 @@ const itAdminAuth = async (req, res, next) => {
     try {
         
         const token = req.header('Authorization');
-        console.log("not get token");
         
         const decoded = await jwt.verify(token, "mysecret");
-        console.log("got token");
+        
         
 
         if(decoded.uuid.endsWith('itAdmin') === false){

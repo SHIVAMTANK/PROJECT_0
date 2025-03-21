@@ -1,6 +1,6 @@
 const express = require('express');
 
-const router = express.Router();
+const router = express.Router('/faculty_adminBlock');
 const auth = require('../../middleware/faculty_adminBlock');
 
 router.post('/login',require('../../controllers/faculty_adminBlock/login'));

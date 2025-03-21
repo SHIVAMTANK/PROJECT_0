@@ -1,35 +1,24 @@
-const nodemailer = require('nodemailer')
-const hbs = async () => (await import('nodemailer-express-handlebars')).default;
+const nodemailer = require('nodemailer');
 
 const mailTransporter = nodemailer.createTransport({
-    host:'smtp.gmail.com',
-    service:'gmail',
-    port:587,
-    secure: false,
-    auth:{
-        user:"shivamtank8059@gmail.com",
-        pass:'axmk bkhw nlso xrbk'
+    service: 'gmail',
+    auth: {
+        user: "shivamtank8059@gmail.com",
+        pass: 'uybw fyeg uoga dpub'
     },
     tls: {
-        rejectUnauthorized: false, // Allow self-signed certificates
+        rejectUnauthorized: false // This will fix the self-signed certificate error
     },
-    // logger:true,
-    // debug:true
+    debug: true
 });
 
-const handlebarOption = {
-    viewEngine: {
-        extName: '.hbs',
-        partialsDir:'../backEND/hbsTemplates/',
-        layoutsDir:'../backEND/hbsTemplates/',
-        defaultLayout:false,
-    },viewPath:'../backEND/hbsTemplates/',extName:'.hbs'
-}
-mailTransporter.use('compile',hbs(handlebarOption));
-
+// Simple verification
 mailTransporter.verify((error, success) => {
-    if (error) console.log(error);
-    console.log("SMTP Server is ready");
+    if (error) {
+        console.error('SMTP Connection Error:', error);
+    } else {
+        console.log('Server is ready to send emails');
+    }
 });
 
 module.exports = mailTransporter;

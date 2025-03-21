@@ -3,8 +3,10 @@ const jwt = require('jsonwebtoken');
 const auth = async (req, res, next) => {
     try {
         // console.log(req.headers)
-        const token = req.headers.authorization;
-        const data = await jwt.verify(token, "mysecret");
+        const token = req.header('Authorization');
+        console.log(token);
+        
+        const data = jwt.verify(token, "mysecret");
         if (data.uuid.endsWith('staff') === false) {
             return res.status(401).send({
                 message: 'Auth failed'
