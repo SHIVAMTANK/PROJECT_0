@@ -3,11 +3,35 @@ const visitor_transactional = require('../../models/transactional/visitor');
 
 const faculty_adminBlock = require('../../models/static/faculty_adminBlock/faculty_adminBlock');
 
-
-
-
+const multer = require('multer');
+const path = require('path');
 const uuid = require('uuid');
 
+// Configure multer
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/visitors/');
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+        cb(null, 'visitor-' + uniqueSuffix + '.png');
+    }
+});
+
+// Create multer instance with more relaxed settings
+const upload = multer({ storage }).single('photo');
+
+// Wrap the middleware in a promise
+const handleUpload = (req, res) => {
+    return new Promise((resolve, reject) => {
+        upload(req, res, (err) => {
+            if (err) {
+                reject(err);
+            }
+            resolve();
+        });
+    });
+};
 
 const visitorEntryExit = async (req, res) => {
 
@@ -19,7 +43,7 @@ const visitorEntryExit = async (req, res) => {
             const uuid = req.body.uuid;
 
             const file = req.files.photo;
-            const photoUrl = await filesUpload(file.tempFilePath, "visitor");
+            const photoUrl = await handleUpload(req, res);
 
             const visitorData = await visitor.findOne({ uuid: uuid });
 
@@ -84,7 +108,7 @@ const visitorEntryExit = async (req, res) => {
             const entry_time = istDateTime;
 
             // upload photo to blob
-            const photoUrl = await filesUpload(photo.tempFilePath, "visitor");
+            const photoUrl = await handleUpload(req, res);
 
 
             const new_visitor = new visitor_transactional({
@@ -111,7 +135,65 @@ const visitorEntryExit = async (req, res) => {
     }
 }
 
-module.exports = visitorEntryExit;
+const visitorEntry = (req, res) => {
+    // Always ensure we send a JSON response
+    const sendJsonResponse = (status, data) => {
+        res.status(status).json({
+            success: status === 200,
+            ...data,
+            timestamp: new Date().toISOString()
+        });
+    };
+
+    try {
+        upload(req, res, async (err) => {
+            if (err) {
+                console.error('Upload error:', err);
+                return sendJsonResponse(400, {
+                    message: 'File upload failed',
+                    error: err.message
+                });
+            }
+
+            try {
+                // Log received data
+                console.log('Form data:', req.body);
+                console.log('File:', req.file);
+
+                // Validate required fields
+                if (!req.body.name || !req.body.email) {
+                    return sendJsonResponse(400, {
+                        message: 'Missing required fields'
+                    });
+                }
+
+                // Generate a unique ID for the visitor
+                const visitorId = Date.now().toString();
+
+                // Send success response
+                return sendJsonResponse(200, {
+                    message: 'Visitor entry created successfully',
+                    uuid: visitorId
+                });
+
+            } catch (error) {
+                console.error('Processing error:', error);
+                return sendJsonResponse(500, {
+                    message: 'Error processing visitor entry',
+                    error: error.message
+                });
+            }
+        });
+    } catch (error) {
+        console.error('Server error:', error);
+        return sendJsonResponse(500, {
+            message: 'Server error',
+            error: error.message
+        });
+    }
+};
+
+module.exports = visitorEntry;
 
 
 

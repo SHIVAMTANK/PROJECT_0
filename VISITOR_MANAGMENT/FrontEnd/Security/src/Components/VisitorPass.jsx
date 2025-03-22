@@ -14,8 +14,8 @@ const VisitorPass = React.forwardRef(({ data }, ref) => {
                     <img src={Logo} alt="Company Logo" />
                 </div>
                 <div className="company-info">
-                    <h1>DAIICT</h1>
-                    <p>Gandhinagar</p>
+                    <h1>COLLEGE</h1>
+                    <p>NADIAD</p>
                 </div>
             </div>
             <div className="details">

@@ -2,26 +2,35 @@ const jwt = require('jsonwebtoken');
 
 const auth = async (req, res, next) => {
     try {
-        // console.log(req.headers)
-        const token = req.headers.authorization;
-        const data = await jwt.verify(token, "mysecret");
-        // console.log(data);
-        if (data.uuid.endsWith('staff') === false) {
-            return res.status(401).send({
-                message: 'Auth failed'
+        // Get token from header
+        const token = req.header('Authorization')?.replace('Bearer ', '');
+
+        if (!token) {
+            return res.status(401).json({
+                success: false,
+                message: 'No authentication token, access denied'
             });
         }
-        // console.log(data);
-        req.user = data;
-        next();
+
+        try {
+            // Verify token
+            const decoded = jwt.verify(token, "mysecret");
+            req.user = decoded;
+            next();
+        } catch (e) {
+            console.error('Token verification failed:', e);
+            res.status(401).json({
+                success: false,
+                message: 'Token verification failed'
+            });
+        }
     } catch (error) {
-        console.log("This is error from ./middleware/SecurityAuth.js");
-        console.log(error);
-        return res.status(401).send({
-            message: 'Auth failed'
+        console.error('Auth middleware error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server Error'
         });
     }
 };
-
 
 module.exports = auth;

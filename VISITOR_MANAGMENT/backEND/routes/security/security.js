@@ -40,6 +40,14 @@ router.get('/getStaffLogs', auth,require('../../controllers/dataTables/getStaffL
 
 router.get('/getParentLogs',auth, require('../../controllers/dataTables/getParentLogs'));
 
+// Add new OTP routes
+router.post('/visitor/send-otp', auth, require('../../controllers/security/visitorOTP/sendOTP'));
+router.post('/visitor/verify-otp', auth, require('../../controllers/security/visitorOTP/verifyOTP'));
+
+// Add these new routes
+router.post('/visitor/create', auth, require('../../controllers/security/visitorCreate'));
+router.post('/visitor/upload-photo', auth, require('../../controllers/security/visitorPhotoUpload'));
+
 
 
 

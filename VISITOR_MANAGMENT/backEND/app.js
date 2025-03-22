@@ -37,6 +37,13 @@ require('./triggers/controller');
 
 const port = process.env.PORT || 7777;
 
+// Create uploads directory if it doesn't exist
+const fs = require('fs');
+const uploadDir = 'uploads/visitors';
+if (!fs.existsSync(uploadDir)){
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 app.use('/student',require('./routes/student/student'));
 app.use('/security',require('./routes/security/security'));
 app.use('/hostelWarden',require('./routes/hostelWarden/hostelWarden'));

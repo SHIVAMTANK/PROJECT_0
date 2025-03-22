@@ -75,81 +75,115 @@ const Visitors = () => {
         setIsDetailsFilled(true)
     }
 
-    const onSubmit2 = (data, e) => {
-
-        if (data.Mobile == '') {
-            alert('Please fill all fields')
-            return
+    const onSubmit2 = async (data, e) => {
+        if (!data.Email) {
+            alert('Please enter an email address');
+            return;
         }
-        else if (data.Mobile.length != 10) {
-            alert('Mobile number should be of 10 digits')
-            return
+        if (!data.Email.includes('@')) {
+            alert('Please enter a valid email address');
+            return;
         }
-
-        // console.log(data)
-        setVisitorData({ ...visitorData, Mobile: data.Mobile })
-        setIsVisitorAdded(true)
-        setIsOtpSent(true)
-    }
-
-    const onSubmit3 = (data, e) => {
-
-        if (data.OTP == '') {
-            alert('Please fill all fields')
-            return
+        if (!data.Mobile) {
+            alert('Please enter a mobile number');
+            return;
         }
-        else if (data.OTP.length != 6) {
-            alert('OTP should be of 6 digits')
-            return
+        if (data.Mobile.length !== 10) {
+            alert('Mobile number should be 10 digits');
+            return;
         }
 
-        // console.log(data)
-        setVisitorData({ ...visitorData, OTP: data.OTP })
+        try {
+            // Send OTP to email
+            const response = await postRequestWithToken('security/visitor/send-otp', {
+                name: visitorData.Name,
+                email: data.Email
+            });
 
-        // send data to backend
-        const sendVisitorData = async () => {
-            const formData = new FormData()
-
-            const file = base64ToFile(imgSrc, 'capture.png');
-
-            formData.append('name', visitorData.Name)
-            formData.append('mobile', visitorData.Mobile)
-            formData.append('purpose', visitorData.Reason)
-            formData.append('photo', file)
-
-            // console.log(formData)
-
-            const response = await postRequestWithToken('security/visitorEntry', formData, {
-                'Content-Type': 'multipart/form-data'
-            }, {})
-            // console.log(response)
-
-            if (response.status == 200) {
-                alert('Visitor Added Successfully')
-                completeReset()
-                navigate('/visitor-pass', { state: {
-                    name: visitorData.Name, 
-                    purpose: visitorData.Reason, 
-                    mobile: visitorData.Mobile, 
-                    entryTime: new Date().toLocaleTimeString(), 
-                    validityFrom: new Date().toLocaleDateString(), 
-                    validityTo: new Date().toLocaleDateString(),
-                    qrCodeValue: response.data.uuid,
-                    date: new Date().toLocaleDateString(),
-                    visitorPhoto: imgSrc
-                } })
+            if (response.status === 200) {
+                setVisitorData(prev => ({
+                    ...prev,
+                    Email: data.Email,
+                    Mobile: data.Mobile
+                }));
+                setIsOtpSent(true);
+                alert('OTP sent to your email');
+            } else {
+                alert('Failed to send OTP');
             }
-            else {
-                alert('Error Occured')
-                completeReset()
-                navigate('/visitors')
-            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to send OTP');
+        }
+    };
+
+    const onSubmit3 = async (data, e) => {
+        if (!data.OTP) {
+            alert('Please enter OTP');
+            return;
         }
 
-        sendVisitorData()
+        try {
+            const verifyResponse = await postRequestWithToken('security/visitor/verify-otp', {
+                email: visitorData.Email,
+                otp: data.OTP
+            });
 
+            if (verifyResponse.status === 200) {
+                setIsOtpVerified(true);
+            } else {
+                alert('Invalid OTP');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to verify OTP');
+        }
+    };
 
-    }
+    const onSubmit4 = async (data, e) => {
+        if (!data.Mobile) {
+            alert('Please enter a mobile number');
+            return;
+        }
+        if (data.Mobile.length !== 10) {
+            alert('Mobile number should be 10 digits');
+            return;
+        }
+
+        try {
+            // Create visitor with all data
+            const visitorDataToSend = {
+                name: visitorData.Name,
+                email: visitorData.Email,
+                mobile: data.Mobile,
+                purpose: visitorData.Reason
+            };
+
+            const response = await postRequestWithToken('security/visitor/create', visitorDataToSend);
+
+            if (response.status === 200) {
+                alert('Visitor Added Successfully');
+                completeReset();
+                navigate('/visitor-pass', {
+                    state: {
+                        name: visitorData.Name,
+                        purpose: visitorData.Reason,
+                        email: visitorData.Email,
+                        mobile: data.Mobile,
+                        entryTime: new Date().toLocaleTimeString(),
+                        validityFrom: new Date().toLocaleDateString(),
+                        validityTo: new Date().toLocaleDateString(),
+                        qrCodeValue: response.data.uuid,
+                        date: new Date().toLocaleDateString(),
+                        visitorPhoto: imgSrc
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error occurred: ' + error.message);
+        }
+    };
 
     const completeReset = () => {
         reset()
@@ -258,49 +292,74 @@ const Visitors = () => {
                             {
                                 !isVisitorAdded && isPhotoCaptured &&
 
-                                <form className='md:bg-white p-10 md:rounded-2xl md:shadow-2xl w-[400px] space-y-5 ' autoComplete='off'
-                                    id='loginForm' onSubmit={handleSubmit(onSubmit2)}>
-                                    <h1 className='text-2xl font-bold'>Add Visitor</h1>
-                                    <p className='text-gray-500'>Please fill the form to add visitor.</p>
-
+                                <form className='md:bg-white p-10 md:rounded-2xl md:shadow-2xl w-[400px] space-y-5' 
+                                    onSubmit={handleSubmit(onSubmit2)}>
+                                    <h1 className='text-2xl font-bold'>Contact Information</h1>
                                     <InputField
-                                        placeholder='9876543210'
+                                        placeholder='example@email.com'
+                                        label='Email'
+                                        type='email'
+                                        register={register}
+                                        error={errors.Email?.message}
+                                    />
+                                    <InputField
+                                        placeholder='Enter 10-digit mobile number'
                                         label='Mobile'
                                         type='text'
                                         register={register}
                                         error={errors.Mobile?.message}
                                     />
-                                    <Button type='submit'>Next</Button>
+                                    <Button type='submit'>Send OTP</Button>
+                                    <Button onClick={() => {
+                                        completeReset();
+                                        navigate('/dashboard');
+                                    }}>Cancel</Button>
+                                </form>
+                            }
+
+                            {/* 4th step */}
+                            {
+                                isOtpSent && !isOtpVerified &&
+                                <form className='md:bg-white p-10 md:rounded-2xl md:shadow-2xl w-[400px] space-y-5'
+                                    onSubmit={handleSubmit(onSubmit3)}>
+                                    <h1 className='text-2xl font-bold'>Verify OTP</h1>
+                                    <p className='text-gray-500'>Enter the OTP sent to your email</p>
+                                    <InputField
+                                        placeholder='Enter OTP'
+                                        label='OTP'
+                                        type='text'
+                                        register={register}
+                                        error={errors.OTP?.message}
+                                    />
+                                    <Button type='submit'>Verify OTP</Button>
+                                    <Button onClick={() => {
+                                        completeReset();
+                                        navigate('/dashboard');
+                                    }}>Cancel</Button>
+                                </form>
+                            }
+
+                            {/* 5th step */}
+                            {
+                                isOtpVerified &&
+                                <form className='md:bg-white p-10 md:rounded-2xl md:shadow-2xl w-[400px] space-y-5 ' autoComplete='off'
+                                    id='loginForm' onSubmit={handleSubmit(onSubmit4)}>
+                                    <h1 className='text-2xl font-bold'>Enter Mobile Number</h1>
+                                    <InputField
+                                        placeholder='Enter 10-digit mobile number'
+                                        label='Mobile'
+                                        type='text'
+                                        register={register}
+                                        error={errors.Mobile?.message}
+                                    />
+                                    <Button type='submit'>Submit</Button>
                                     <Button onClick={() => {
                                         completeReset()
                                         navigate('/dashboard')
-                                    }
-                                    }>Cancel</Button>
+                                    }}>Cancel</Button>
                                 </form>
                             }
                         </div>
-
-                        {/* 4th step */}
-                        {
-                            isOtpSent && !isOtpVerified &&
-                            <form className='md:bg-white p-10 md:rounded-2xl md:shadow-2xl w-[400px] space-y-5 ' autoComplete='off'
-                                id='loginForm' onSubmit={handleSubmit(onSubmit3)}>
-                                <h1 className='text-2xl font-bold'>Add Visitor</h1>
-                                <p className='text-gray-500'>Please fill the form to add visitor.</p>
-                                <InputField
-                                    placeholder='Enter OTP'
-                                    label='OTP'
-                                    type='text'
-                                    register={register}
-                                    error={errors.OTP?.message}
-                                />
-                                <Button type='submit'>Submit</Button>
-                                <Button onClick={() => {
-                                    completeReset()
-                                    navigate('/dashboard')
-                                }}>Cancel</Button>
-                            </form>
-                        }
                     </TabPanel>
                     <TabPanel>
                         <div>
