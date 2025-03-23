@@ -13,8 +13,8 @@ app.set('view engine', 'hbs');
 
 //middleware
 app.use(fileUpload({
-    useTempFiles:true,
-    tempFileDir:'/tmp/',
+    useTempFiles: true,
+    tempFileDir: '/tmp/'
 }));
 
 const corsOptions = {
@@ -55,8 +55,8 @@ app.use('/registrar', require('./routes/registrar/registrar'));
 app.use('/faculty_adminBlock', require('./routes/faculty_adminBlock/faculty_adminBlock'));
 app.use('/securityManager', require('./routes/securityManager/securityManager'));
 
-
-
+const path = require('path');
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.listen(port,()=>{
     console.log(`server is listening on port ${port}`);

@@ -16,7 +16,7 @@ router.post('/login', require('../../controllers/security/login'));
 
 router.get('/getData', auth,require('../../controllers/security/verifyUser'));
 
-router.post('/studentEntryExit', auth,require('../../controllers/security/studentEntryExit'));
+router.post('/studentEntryExit', auth, require('../../controllers/security/studentEntryExit'));
 
 router.post('/staffEntryExit', auth,require('../../controllers/security/staffEntryExit'));
 
@@ -32,7 +32,7 @@ router.get('/getVisitorList',auth, require('../../controllers/security/getVisito
 
 router.get('/getCurrentVisitors',auth,require('../../controllers/dataTables/getCurrentVisitors'));
 
-router.get('/getStudentLogs',auth, require('../../controllers/dataTables/getStudentLogs'));
+router.get('/getStudentLogs', auth, require('../../controllers/dataTables/getStudentLogs'));
 
 router.get('/getVisitorsLogs', auth,require('../../controllers/dataTables/getVisitorsLogs'));
 

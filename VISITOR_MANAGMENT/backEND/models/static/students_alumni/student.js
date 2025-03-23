@@ -4,13 +4,13 @@ const bcrypt = require('bcryptjs');
 
 
 const studentSchema = new mongoose.Schema({
-    name: {
-        type: String,
-        required: true
-    },
     student_id: {
         type: Number,
-        unique: true,
+        required: true,
+        unique: true
+    },
+    name: {
+        type: String,
         required: true
     },
     password: {
@@ -64,6 +64,9 @@ studentSchema.pre('updateOne', async function (next) {
 
 
 
-const Student = mongoose.model('Student', studentSchema);   
+const Student = mongoose.model('students', studentSchema);
+
+// Log the model creation
+console.log('Creating student model with collection:', Student.collection.collectionName);
 
 module.exports = Student;

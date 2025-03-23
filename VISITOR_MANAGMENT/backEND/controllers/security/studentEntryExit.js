@@ -2,16 +2,28 @@ const student_transactional = require('../../models/transactional/student');
 const student_logs = require('../../models/logs/student');
 const student = require('../../models/static/students_alumni/student');
 
-
-
-
 const studentEntryExit = async (req, res) => {
     try {
-
-        const uuid = req.body.uuid;
+        const student_id = req.body.student_id;
         const photo = req.files.photo;
 
-        const match = await student_transactional.findOne({ uuid: uuid });
+        // First find student by student_id
+        const studentData = await student.findOne({ student_id: student_id });
+        console.log("1. Found student:", studentData);
+
+        if (!studentData) {
+            return res.status(404).send({ message: "Student not found" });
+        }
+
+        // Move file to uploads directory
+        const uploadDir = 'uploads/students';
+        const fileName = `${Date.now()}-${photo.name}`;
+        const photoUrl = `/${uploadDir}/${fileName}`;
+        await photo.mv(`./${uploadDir}/${fileName}`);
+
+        // Check if student is already in transactional
+        const match = await student_transactional.findOne({ student_id: student_id });
+        console.log("2. Found in transactional:", match);
 
         const current_time = new Date();
         const options = {
@@ -26,89 +38,53 @@ const studentEntryExit = async (req, res) => {
         };
         const istDateTime = current_time.toLocaleString("en-IN", options);
 
-
         if (match) {
-            // save photo to blob 
-            const photoUrl = await docsUpload(photo.tempFilePath, "student");
-
-            // const update = await student_transactional.updateOne({ uuid: uuid }, { photo_entry: photoUrl });
-
-            // save to logs
-            // const data = await student_transactional.findOne({ uuid: uuid });
-
+            // This is an entry
             const logs = new student_logs({
-                student_id: match.student_id,
+                student_id: student_id,
                 photo_exit: match.photo_exit,
                 photo_entry: photoUrl,
                 isLongLeave: match.isLongLeave,
                 reason: match.reason,
                 entry_time: istDateTime,
                 exit_time: match.exit_time,
-                uuid: match.uuid,
+                uuid: studentData.uuid,
                 entry_authorised_by: req.user.name,
                 exit_authorised_by: match.exit_authorised_by
             });
 
-            const saveLogs = await logs.save();
+            console.log("3. Saving entry log:", logs);
+            await logs.save();
+            console.log("4. Entry log saved successfully");
 
-            // delete from transactional
-            const now = new Date();
-            const resData = {
-                late: false,
-                entry: true
-            };
-            // Check if the current time is before 12:00 AM
-            if (!(now.getHours() < 24 && now.getHours() >= 0) && data.isLongLeave == false) {
-                resData.late = true;
-            }
+            await student_transactional.deleteOne({ student_id: student_id });
+            return res.status(200).send({ entry: true });
 
-            const deleteData = await student_transactional.deleteOne({ uuid: uuid });
-
-
-            res.status(200).send(resData);
-            return;
-
-        }
-
-        else {
-
-            // fetch details from Student Database
-            const studentData = await student.findOne({ uuid: uuid });
-
-            // save photo to blob
-            const photoUrl = await docsUpload(photo.tempFilePath, "student");
-
-            
-
+        } else {
+            // This is an exit
             const data = new student_transactional({
                 name: studentData.name,
-                student_id: studentData.student_id,
-                uuid: req.body.uuid,
+                student_id: student_id,
+                uuid: studentData.uuid,
                 photo_exit: photoUrl,
                 exit_time: istDateTime,
-                isLongLeave: req.body.isLongLeave,
+                isLongLeave: req.body.isLongLeave === 'true',
                 reason: req.body.reason,
-                entry_time: studentData.entry_time,
                 exit_authorised_by: req.user.name
             });
 
-            const saveData = await data.save();
-            const resData = {
-                entry: false
-            };
-            res.status(200).send(resData);
-            return;
-
+            console.log("3. Saving exit record:", data);
+            await data.save();
+            console.log("4. Exit record saved successfully");
+            
+            return res.status(200).send({ entry: false });
         }
 
     } catch (error) {
-
-        console.log("This is an error from ./controller/security/studentEntryExit.js");
-        console.log(error);
-        res.status(500).send();
-
+        console.error("Error in studentEntryExit:", error);
+        return res.status(500).send({ message: error.message });
     }
-}
+};
 
 module.exports = studentEntryExit;
 

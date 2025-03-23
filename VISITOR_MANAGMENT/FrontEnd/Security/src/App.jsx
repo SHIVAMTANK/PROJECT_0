@@ -21,6 +21,7 @@ import OtherEntry from './Views/TodaysVisit/OtherEntry';
 import OtherTempPass from './Views/TodaysVisit/OtherTmpPass';
 import Cookies from 'js-cookie'
 import { Navigate, Outlet } from 'react-router-dom'
+import StudentEntryExit from './Views/StudentEntryExit';
 
 // react router 
 
@@ -70,6 +71,7 @@ function App() {
                     <Route path='/records/visitor' element={<VisitorRecords />}  ></Route>
                     <Route path='/records/staff' element={<StaffRecords />}  ></Route>
                     <Route path='/records/parent' element={<ParentRecords />}  ></Route>
+                    <Route path='/student-entry-exit' element={<StudentEntryExit />} />
                 </Route>
                 {/* not found */}
                 <Route path="*" element={<h1>Not Found</h1>} />

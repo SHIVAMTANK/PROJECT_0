@@ -6,7 +6,7 @@ import React, {
 } from "react";
 import { AgGridReact } from "ag-grid-react";
 import "ag-grid-community/styles/ag-grid.css";
-import "ag-grid-community/styles/ag-theme-quartz.css";
+import "ag-grid-community/styles/ag-theme-alpine.css";
 import { BACKEND_URL } from "../../Services/Helper";
 import { getRequestWithToken } from "../../../../HostelWarden/src/Services/Api";
 
@@ -285,7 +285,7 @@ const VisitorRecordList = () => {
 
                 <div
                     style={gridStyle}
-                    className="ag-theme-quartz "
+                    className="ag-theme-alpine"
                 >
                     <AgGridReact
                         ref={gridRef}

@@ -12,21 +12,32 @@ export const postRequest = async (endpoint, data, headers = {}, params = {}) => 
     }
 };
 
-export const postRequestWithToken = async (endpoint, data, headers = {}, params = {}) => {
+export const postRequestWithToken = async (endpoint, data, headers = {}) => {
     const token = Cookies.get('token') || null;
     if (!token) {
-
         alert('Please login to access this page');
         window.location.href = `/login`;
         throw new Error('No token found');
     }
-    headers['Authorization '] = token;
-    // headers['Content-Type'] = 'application/json';
+
+    const config = {
+        headers: {
+            'Authorization': token,
+            ...headers
+        }
+    };
+
+    // Don't set Content-Type for FormData
+    if (!(data instanceof FormData)) {
+        config.headers['Content-Type'] = 'application/json';
+    }
+
     try {
-        const response = await commonrequest("POST", `${BACKEND_URL}/${endpoint}`, data, headers, params);
+        const response = await commonrequest("POST", `${BACKEND_URL}/${endpoint}`, data, config.headers);
         return response;
     } catch (error) {
-        throw new Error(`Error in POST request to ${endpoint}`);
+        console.error('API Error:', error);
+        throw error;
     }
 }
 
